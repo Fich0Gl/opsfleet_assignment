@@ -1,0 +1,7 @@
+clusterName: ""
+nodeRoleName: ""
+amiAlias: "al2023@latest"
+
+limits:
+  cpu: "100"
+  memory: "400Gi"

@@ -27,7 +27,7 @@ test-arm64:
 	kubectl apply ...
 
 nodes:
-	kubectl get nodess
+	kubectl get nodes
 
 destroy:
 	terraform destroy

@@ -15,16 +15,22 @@ variable "cluster_name" {
   }
 }
 
+variable "cluster_endpoint_public_access" {
+  description = "Enable the public EKS Kubernetes API endpoint."
+  type        = bool
+  default     = true
+}
+
 variable "kubernetes_version" {
   description = "EKS Kubernetes minor version."
   type        = string
   default     = "1.36"
 }
 
-variable "cluster_endpoint_public_access" {
-  description = "Enable the public EKS Kubernetes API endpoint."
-  type        = bool
-  default     = true
+variable "karpenter_version" {
+  description = "Karpenter Helm chart version."
+  type        = string
+  default     = "1.14.0"
 }
 
 variable "vpc_cidr" {
@@ -106,6 +112,24 @@ variable "system_node_max_size" {
   description = "Maximum size of the system managed node group."
   type        = number
   default     = 3
+}
+
+variable "karpenter_ami_alias" {
+  description = "AMI alias used by the Karpenter EC2NodeClass. Pin this in production."
+  type        = string
+  default     = "al2023@latest"
+}
+
+variable "karpenter_nodepool_cpu_limit" {
+  description = "CPU limit applied independently to each Karpenter NodePool."
+  type        = string
+  default     = "100"
+}
+
+variable "karpenter_nodepool_memory_limit" {
+  description = "Memory limit applied independently to each Karpenter NodePool."
+  type        = string
+  default     = "400Gi"
 }
 
 variable "tags" {
