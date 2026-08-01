@@ -27,7 +27,7 @@ test-arm64:
 	kubectl apply -f examples/arm64-deployment.yaml
 
 nodes:
-	kubectl get nodes
+	kubectl get nodes -L kubernetes.io/arch,karpenter.sh/capacity-type,karpenter.sh/nodepool,node.kubernetes.io/instance-type
 
 destroy:
 	terraform destroy

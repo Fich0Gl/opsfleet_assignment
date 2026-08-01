@@ -1,0 +1,23 @@
+aws_region   = "eu-central-1"
+cluster_name = "opsfleet-karpenter-poc"
+
+# Current versions when this assignment was prepared (31.07.2026).
+kubernetes_version = "1.36"
+karpenter_version  = "1.14.0"
+
+# Replace this with the public IP/CIDR of the person or CI runner applying Terraform.
+cluster_endpoint_public_access_cidrs = ["203.0.113.10/32"]
+
+# A single NAT Gateway keeps this POC less expensive. Use false for production-style AZ redundancy.
+single_nat_gateway = true
+
+# Fine for a POC. Pin an AL2023 release in production, for example al2023@vYYYYMMDD.
+karpenter_ami_alias = "al2023@latest"
+
+tags = {
+  Owner = "OpsFleet"
+}
+
+system_node_instance_types = ["t3.medium"]
+
+create_ec2_spot_service_linked_role = true
