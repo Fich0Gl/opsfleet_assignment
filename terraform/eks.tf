@@ -66,6 +66,10 @@ module "eks" {
       update_config = {
         max_unavailable_percentage = 50
       }
+
+      iam_role_additional_policies = {
+        AmazonSSMManagedInstanceCore = local.amazon_ssm_managed_instance_core_policy_arn
+      }
     }
   }
 

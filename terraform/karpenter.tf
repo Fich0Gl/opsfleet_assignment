@@ -16,7 +16,7 @@ module "karpenter" {
   node_iam_role_name            = "${var.cluster_name}-karpenter-node"
 
   node_iam_role_additional_policies = {
-    AmazonSSMManagedInstanceCore = "arn:aws:iam::aws:policy/AmazonSSMManagedInstanceCore"
+    AmazonSSMManagedInstanceCore = local.amazon_ssm_managed_instance_core_policy_arn
   }
 
   tags = local.tags

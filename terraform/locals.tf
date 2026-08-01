@@ -5,6 +5,8 @@ locals {
 
   availability_zones = length(var.availability_zones) > 0 ? (var.availability_zones) : (local.automatically_selected_availability_zones)
 
+  amazon_ssm_managed_instance_core_policy_arn = "arn:aws:iam::aws:policy/AmazonSSMManagedInstanceCore"
+
   tags = merge(
     {
       Project     = "OpsFleet DevOps Assessment"
