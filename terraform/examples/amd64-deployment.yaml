@@ -1,0 +1,40 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: workload-amd64
+spec:
+  replicas: 2
+  selector:
+    matchLabels:
+      app: workload-amd64
+  template:
+    metadata:
+      labels:
+        app: workload-amd64
+    spec:
+      terminationGracePeriodSeconds: 0
+      nodeSelector:
+        workload.opsfleet.io/architecture: amd64
+        karpenter.sh/capacity-type: spot
+      securityContext:
+        runAsNonRoot: true
+        runAsUser: 1000
+        runAsGroup: 3000
+        fsGroup: 2000
+        seccompProfile:
+          type: RuntimeDefault
+      containers:
+        - name: pause
+          image: public.ecr.aws/eks-distro/kubernetes/pause:3.7
+          resources:
+            requests:
+              cpu: "1"
+              memory: 512Mi
+            limits:
+              cpu: "1"
+              memory: 512Mi
+          securityContext:
+            allowPrivilegeEscalation: false
+            capabilities:
+              drop: ["ALL"]
+            readOnlyRootFilesystem: true

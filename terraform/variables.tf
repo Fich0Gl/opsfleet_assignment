@@ -132,6 +132,12 @@ variable "karpenter_nodepool_memory_limit" {
   default     = "400Gi"
 }
 
+variable "create_ec2_spot_service_linked_role" {
+  description = "Create the account-level EC2 Spot service-linked role."
+  type        = bool
+  default     = false
+}
+
 variable "tags" {
   description = "Additional tags applied to AWS resources."
   type        = map(string)

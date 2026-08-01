@@ -22,6 +22,12 @@ module "karpenter" {
   tags = local.tags
 }
 
+resource "aws_iam_service_linked_role" "ec2_spot" {
+  count            = var.create_ec2_spot_service_linked_role ? 1 : 0
+  aws_service_name = "spot.amazonaws.com"
+  description      = "Allows Amazon EC2 Spot to launch and manage Spot Instances."
+}
+
 resource "helm_release" "karpenter" {
   name             = "karpenter"
   namespace        = "kube-system"
@@ -68,7 +74,8 @@ resource "helm_release" "karpenter" {
 
   depends_on = [
     module.eks,
-    module.karpenter
+    module.karpenter,
+    aws_iam_service_linked_role.ec2_spot
   ]
 }
 
@@ -80,7 +87,7 @@ resource "helm_release" "karpenter_config" {
   atomic          = true
   cleanup_on_fail = true
   wait            = true
-  timeout         = 600
+  timeout         = 1200
 
   values = [
     yamlencode({
