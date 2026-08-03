@@ -73,6 +73,7 @@ resource "helm_release" "karpenter" {
   ]
 
   depends_on = [
+    module.vpc,
     module.eks,
     module.karpenter,
     aws_iam_service_linked_role.ec2_spot
@@ -102,5 +103,8 @@ resource "helm_release" "karpenter_config" {
     })
   ]
 
-  depends_on = [helm_release.karpenter]
+  depends_on = [
+    module.vpc,
+    helm_release.karpenter
+  ]
 }
