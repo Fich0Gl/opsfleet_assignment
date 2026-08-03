@@ -100,8 +100,82 @@ Multi-Availability Zone deployment protects against failures inside the primary 
 
 ## 5. High-Level Architecture Diagram
 
-```
-the diagram
+```mermaid
+flowchart TB
+    Users["Internet users"]
+    Developers["Developers"]
+    GitHub["GitHub repositories"]
+    Actions["GitHub Actions CI"]
+    ConfigRepo["GitOps configuration repository"]
+
+    subgraph Organization["AWS Organization"]
+        Management["Management account<br/>Organizations and Control Tower"]
+        Security["Security / Audit account<br/>Security Hub and GuardDuty"]
+        LogArchive["Log Archive account<br/>Central immutable logs"]
+
+        subgraph Production["Production workload account"]
+            Route53["Amazon Route 53"]
+            CloudFront["Amazon CloudFront"]
+            WAF["AWS WAF"]
+            S3Frontend["Private S3 bucket<br/>React SPA"]
+            ECR["Amazon ECR<br/>Backend images"]
+            Secrets["AWS Secrets Manager"]
+            KMS["AWS KMS"]
+            CloudWatch["Amazon CloudWatch"]
+
+            subgraph VPC["Production VPC across three Availability Zones"]
+                ALB["Application Load Balancer"]
+
+                subgraph PrivateApp["Private application subnets"]
+                    EKS["Amazon EKS"]
+                    SystemNodes["Managed node group<br/>Critical platform add-ons"]
+                    Karpenter["Karpenter-managed nodes<br/>Flask application"]
+                    Flask["Flask API pods"]
+                    ArgoCD["Argo CD"]
+                end
+
+                subgraph IsolatedDB["Isolated database subnets"]
+                    RDSPrimary[("Amazon RDS for PostgreSQL<br/>Multi-AZ")]
+                end
+            end
+        end
+
+        NonProd["Non-production workload account<br/>Development and staging EKS"]
+    end
+
+    DRBackups["Secondary AWS Region<br/>Replicated RDS backups and recovery infrastructure"]
+
+    Users --> Route53
+    Route53 --> CloudFront
+    CloudFront --> WAF
+    WAF --> S3Frontend
+
+    Users --> Route53
+    Route53 --> ALB
+    ALB --> Flask
+    Flask --> RDSPrimary
+    Flask --> Secrets
+    Secrets --> KMS
+
+    Developers --> GitHub
+    GitHub --> Actions
+    Actions --> ECR
+    Actions --> S3Frontend
+    Actions --> ConfigRepo
+    ConfigRepo --> ArgoCD
+    ArgoCD --> EKS
+    ECR --> Karpenter
+    SystemNodes --> ArgoCD
+    Karpenter --> Flask
+
+    Production --> CloudWatch
+    Production --> LogArchive
+    NonProd --> LogArchive
+    Security --> Production
+    Security --> NonProd
+    RDSPrimary --> DRBackups
+    Management --> Production
+    Management --> NonProd
 ```
 
 ### 5.1 Main request paths
